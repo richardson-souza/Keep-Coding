@@ -1,0 +1,41 @@
+require 'forwardable'
+class Coffee
+  def cost
+    1.5
+  end
+
+  def ingredients
+    %w(coffe water sugar)
+  end
+end
+
+class CoffeDecorator
+  extend Forwardable #gera automaticamente todos os métodos de delegação, ele vai chamar o cost e o ingredients
+  def initialize(component)
+    @component = component
+  end
+end
+
+#esse double coffe tem os mesmos ingredients que o coffe normal
+class DoubleCoffe < CoffeDecorator
+  def_delegator :@component, :ingredients #delega o ingredients de coffe pra essa variavel component
+  def cost
+    @component.cost * 2
+  end
+end
+
+class Latte < CoffeDecorator
+  def cost
+    @component.cost * 1.5
+  end
+
+  def ingredients
+    @component.ingredients << "milk" << "whipped cream" << "vanilla"
+  end
+end
+
+latte = Latte.new(Coffee.new)
+double_coffe = DoubleCoffe.new(latte)
+
+puts double_coffe.cost
+print double_coffe.ingredients
